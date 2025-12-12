@@ -9,6 +9,8 @@ export default function Home() {
   const [paceMinutes, setPaceMinutes] = useState("");
   const [paceSeconds, setPaceSeconds] = useState("");
   const [calculatedTimes, setCalculatedTimes] = useState<{
+    "100m": string;
+    "200m": string;
     "400m": string;
     "5k": string;
     "10k": string;
@@ -87,6 +89,8 @@ export default function Home() {
     if (pacePerKmSeconds <= 0) return;
 
     const times = {
+      "100m": formatTime((pacePerKmSeconds / 1000) * 100),
+      "200m": formatTime((pacePerKmSeconds / 1000) * 200),
       "400m": formatTime((pacePerKmSeconds / 1000) * 400),
       "5k": formatTime(pacePerKmSeconds * 5),
       "10k": formatTime(pacePerKmSeconds * 10),
@@ -231,6 +235,18 @@ export default function Home() {
                   Estimated Race Times:
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <div className="text-sm text-gray-600">100m</div>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {calculatedTimes["100m"]}
+                    </div>
+                  </div>
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <div className="text-sm text-gray-600">200m</div>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {calculatedTimes["200m"]}
+                    </div>
+                  </div>
                   <div className="bg-blue-50 p-4 rounded-lg">
                     <div className="text-sm text-gray-600">400m</div>
                     <div className="text-2xl font-bold text-blue-600">
