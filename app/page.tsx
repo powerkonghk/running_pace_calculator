@@ -12,6 +12,7 @@ export default function Home() {
     "100m": string;
     "200m": string;
     "400m": string;
+    "1.4k(HV)": string;
     "5k": string;
     "10k": string;
     "half": string;
@@ -19,7 +20,7 @@ export default function Home() {
   } | null>(null);
 
   // Time to Pace states
-  const [targetDistance, setTargetDistance] = useState<"5k" | "10k" | "half" | "full">("5k");
+  const [targetDistance, setTargetDistance] = useState<"100m" | "200m" | "400m" | "1.4k(HV)" | "5k" | "10k" | "half" | "full">("5k");
   const [targetHours, setTargetHours] = useState("");
   const [targetMinutes, setTargetMinutes] = useState("");
   const [targetSeconds, setTargetSeconds] = useState("");
@@ -92,6 +93,7 @@ export default function Home() {
       "100m": formatTime((pacePerKmSeconds / 1000) * 100),
       "200m": formatTime((pacePerKmSeconds / 1000) * 200),
       "400m": formatTime((pacePerKmSeconds / 1000) * 400),
+      "1.4k(HV)": formatTime(pacePerKmSeconds * 1.4),
       "5k": formatTime(pacePerKmSeconds * 5),
       "10k": formatTime(pacePerKmSeconds * 10),
       "half": formatTime(pacePerKmSeconds * 21.0975),
@@ -109,6 +111,10 @@ export default function Home() {
     if (totalSeconds <= 0) return;
 
     const distances: Record<string, number> = {
+      "100m": 0.1,
+      "200m": 0.2,
+      "400m": 0.4,
+      "1.4k(HV)": 1.4,
       "5k": 5,
       "10k": 10,
       "half": 21.0975,
@@ -254,6 +260,12 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="bg-blue-50 p-4 rounded-lg">
+                    <div className="text-sm text-gray-600">1.4K</div>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {calculatedTimes["1.4k(HV)"]}
+                    </div>
+                  </div>
+                  <div className="bg-blue-50 p-4 rounded-lg">
                     <div className="text-sm text-gray-600">5K</div>
                     <div className="text-2xl font-bold text-blue-600">
                       {calculatedTimes["5k"]}
@@ -271,7 +283,7 @@ export default function Home() {
                       {calculatedTimes["half"]}
                     </div>
                   </div>
-                  <div className="bg-blue-50 p-4 rounded-lg col-span-2">
+                  <div className="bg-blue-50 p-4 rounded-lg">
                     <div className="text-sm text-gray-600">Full Marathon</div>
                     <div className="text-2xl font-bold text-blue-600">
                       {calculatedTimes["full"]}
@@ -298,6 +310,10 @@ export default function Home() {
                 onChange={(e) => setTargetDistance(e.target.value as any)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
+                <option value="100m">100m</option>
+                <option value="200m">200m</option>
+                <option value="400m">400m</option>
+                <option value="1.4k(HV)">1.4K (HV)</option>
                 <option value="5k">5K</option>
                 <option value="10k">10K</option>
                 <option value="half">Half Marathon</option>
