@@ -13,6 +13,7 @@ export default function Home() {
     "200m": string;
     "400m": string;
     "1.4k(HV)": string;
+    "3k": string;
     "5k": string;
     "10k": string;
     "half": string;
@@ -20,7 +21,7 @@ export default function Home() {
   } | null>(null);
 
   // Time to Pace states
-  const [targetDistance, setTargetDistance] = useState<"100m" | "200m" | "400m" | "1.4k(HV)" | "5k" | "10k" | "half" | "full">("5k");
+  const [targetDistance, setTargetDistance] = useState<"100m" | "200m" | "400m" | "1.4k(HV)" | "3k" | "5k" | "10k" | "half" | "full">("5k");
   const [targetHours, setTargetHours] = useState("");
   const [targetMinutes, setTargetMinutes] = useState("");
   const [targetSeconds, setTargetSeconds] = useState("");
@@ -38,6 +39,10 @@ export default function Home() {
     "half": string;
     "full": string;
   } | null>(null);
+
+  // Stride Length states
+  const [cadence, setCadence] = useState(180);
+  const [strideLength, setStrideLength] = useState<number | null>(null);
 
   const formatTime = (totalSeconds: number): string => {
     // Round total seconds first to avoid seconds = 60 issue
@@ -94,12 +99,44 @@ export default function Home() {
       "200m": formatTime((pacePerKmSeconds / 1000) * 200),
       "400m": formatTime((pacePerKmSeconds / 1000) * 400),
       "1.4k(HV)": formatTime(pacePerKmSeconds * 1.4),
+      "3k": formatTime(pacePerKmSeconds * 3),
       "5k": formatTime(pacePerKmSeconds * 5),
       "10k": formatTime(pacePerKmSeconds * 10),
       "half": formatTime(pacePerKmSeconds * 21.0975),
       "full": formatTime(pacePerKmSeconds * 42.195),
     };
     setCalculatedTimes(times);
+
+    // Calculate stride length
+    calculateStrideLength();
+  };
+
+  const calculateStrideLength = () => {
+    const mins = parseInt(paceMinutes) || 0;
+    const secs = parseInt(paceSeconds) || 0;
+    const pacePerKmSeconds = mins * 60 + secs;
+    
+    if (pacePerKmSeconds > 0 && cadence > 0) {
+      const speedMperMin = 1000 / (pacePerKmSeconds / 60);
+      const strideLengthMeters = speedMperMin / cadence;
+      setStrideLength(Math.round(strideLengthMeters * 1000) / 10);
+    } else {
+      setStrideLength(null);
+    }
+  };
+
+  const handleCadenceChange = (newCadence: number) => {
+    setCadence(newCadence);
+    // Recalculate stride length immediately when cadence changes
+    const mins = parseInt(paceMinutes) || 0;
+    const secs = parseInt(paceSeconds) || 0;
+    const pacePerKmSeconds = mins * 60 + secs;
+    
+    if (pacePerKmSeconds > 0 && newCadence > 0) {
+      const speedMperMin = 1000 / (pacePerKmSeconds / 60);
+      const strideLengthMeters = speedMperMin / newCadence;
+      setStrideLength(Math.round(strideLengthMeters * 1000) / 10);
+    }
   };
 
   const handleTimeToPace = () => {
@@ -115,6 +152,7 @@ export default function Home() {
       "200m": 0.2,
       "400m": 0.4,
       "1.4k(HV)": 1.4,
+      "3k": 3,
       "5k": 5,
       "10k": 10,
       "half": 21.0975,
@@ -155,6 +193,8 @@ export default function Home() {
     
     setVdotProjections(projections);
   };
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
@@ -229,6 +269,25 @@ export default function Home() {
                 <span className="text-gray-600">/km</span>
               </div>
             </div>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Cadence (steps per minute):
+              </label>
+              <div className="space-y-2">
+                <input
+                  type="range"
+                  min="170"
+                  max="200"
+                  value={cadence}
+                  onChange={(e) => handleCadenceChange(parseInt(e.target.value))}
+                  className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                />
+                <div className="text-center">
+                  <span className="text-2xl font-bold text-blue-600">{cadence}</span>
+                  <span className="text-gray-600 ml-2">spm</span>
+                </div>
+              </div>
+            </div>
             <button
               onClick={handlePaceToTime}
               className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors"
@@ -266,6 +325,12 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="bg-blue-50 p-4 rounded-lg">
+                    <div className="text-sm text-gray-600">3K</div>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {calculatedTimes["3k"]}
+                    </div>
+                  </div>
+                  <div className="bg-blue-50 p-4 rounded-lg">
                     <div className="text-sm text-gray-600">5K</div>
                     <div className="text-2xl font-bold text-blue-600">
                       {calculatedTimes["5k"]}
@@ -290,6 +355,23 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
+                {strideLength && (
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                      Stride Length:
+                    </h3>
+                    <div className="bg-purple-50 p-4 rounded-lg">
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-purple-600">
+                          {strideLength} cm
+                        </div>
+                        <div className="text-sm text-gray-600 mt-2">
+                          at {cadence} steps/min
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -314,6 +396,7 @@ export default function Home() {
                 <option value="200m">200m</option>
                 <option value="400m">400m</option>
                 <option value="1.4k(HV)">1.4K (HV)</option>
+                <option value="3k">3K</option>
                 <option value="5k">5K</option>
                 <option value="10k">10K</option>
                 <option value="half">Half Marathon</option>
@@ -480,6 +563,8 @@ export default function Home() {
             )}
           </div>
         )}
+
+
       </div>
     </div>
   );
