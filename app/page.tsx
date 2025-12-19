@@ -197,40 +197,44 @@ export default function Home() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
-          🏃 Running Pace Calculator
-        </h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 py-12 px-4">
+      <div className="max-w-5xl mx-auto">
+        {/* Hero Header with Bold Typography */}
+        <div className="text-center mb-10">
+          <h1 className="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 mb-3 tracking-tight">
+            Running Calculator
+          </h1>
+          <p className="text-lg text-slate-400 font-medium">Train smarter with precision pace and stride analytics</p>
+        </div>
 
-        {/* Tab Navigation */}
-        <div className="flex gap-2 mb-6 bg-white rounded-lg p-1 shadow">
+        {/* Tab Navigation - Neo-brutalist with bold contrast */}
+        <div className="flex gap-3 mb-8 bg-slate-900/50 backdrop-blur-sm rounded-2xl p-2 shadow-2xl border border-slate-800">
           <button
             onClick={() => setActiveTab("pace-to-time")}
-            className={`flex-1 py-3 px-4 rounded-md font-medium transition-colors ${
+            className={`flex-1 py-4 px-6 rounded-xl font-bold text-base transition-all duration-300 transform ${
               activeTab === "pace-to-time"
-                ? "bg-blue-500 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/50 scale-105"
+                : "text-slate-400 hover:text-white hover:bg-slate-800/50 hover:scale-102"
             }`}
           >
             Pace → Time
           </button>
           <button
             onClick={() => setActiveTab("time-to-pace")}
-            className={`flex-1 py-3 px-4 rounded-md font-medium transition-colors ${
+            className={`flex-1 py-4 px-6 rounded-xl font-bold text-base transition-all duration-300 transform ${
               activeTab === "time-to-pace"
-                ? "bg-blue-500 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/50 scale-105"
+                : "text-slate-400 hover:text-white hover:bg-slate-800/50 hover:scale-102"
             }`}
           >
             Time → Pace
           </button>
           <button
             onClick={() => setActiveTab("vdot")}
-            className={`flex-1 py-3 px-4 rounded-md font-medium transition-colors ${
+            className={`flex-1 py-4 px-6 rounded-xl font-bold text-base transition-all duration-300 transform ${
               activeTab === "vdot"
-                ? "bg-blue-500 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/50 scale-105"
+                : "text-slate-400 hover:text-white hover:bg-slate-800/50 hover:scale-102"
             }`}
           >
             VDOT Projection
@@ -239,133 +243,137 @@ export default function Home() {
 
         {/* Pace to Time Calculator */}
         {activeTab === "pace-to-time" && (
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          <div className="bg-slate-900/40 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-slate-800">
+            <h2 className="text-4xl font-black text-white mb-2">
               Calculate Race Times from Pace
             </h2>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Enter your pace per km:
+            <p className="text-slate-400 mb-8 text-sm">Enter your target pace and see projected finish times</p>
+            
+            <div className="mb-8">
+              <label className="block text-sm font-bold text-cyan-400 mb-3 uppercase tracking-wide">
+                Your Pace per km
               </label>
-              <div className="flex gap-2 items-center">
+              <div className="flex gap-3 items-center">
                 <input
                   type="number"
-                  placeholder="Minutes"
+                  placeholder="Min"
                   value={paceMinutes}
                   onChange={(e) => setPaceMinutes(e.target.value)}
-                  className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-28 px-5 py-4 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-white text-lg font-bold placeholder-slate-600 transition-all duration-200"
                   min="0"
                 />
-                <span className="text-gray-600">:</span>
+                <span className="text-slate-500 text-2xl font-bold">:</span>
                 <input
                   type="number"
-                  placeholder="Seconds"
+                  placeholder="Sec"
                   value={paceSeconds}
                   onChange={(e) => setPaceSeconds(e.target.value)}
-                  className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-28 px-5 py-4 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-white text-lg font-bold placeholder-slate-600 transition-all duration-200"
                   min="0"
                   max="59"
                 />
-                <span className="text-gray-600">/km</span>
+                <span className="text-slate-400 font-semibold text-lg">/km</span>
               </div>
             </div>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Cadence (steps per minute):
+            
+            <div className="mb-8">
+              <label className="block text-sm font-bold text-purple-400 mb-3 uppercase tracking-wide">
+                Cadence (steps per minute)
               </label>
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <input
                   type="range"
                   min="170"
                   max="200"
                   value={cadence}
                   onChange={(e) => handleCadenceChange(parseInt(e.target.value))}
-                  className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                  className="w-full h-3 bg-slate-800/50 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-r [&::-webkit-slider-thumb]:from-purple-500 [&::-webkit-slider-thumb]:to-pink-500 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:shadow-purple-500/50 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-125"
                 />
-                <div className="text-center">
-                  <span className="text-2xl font-bold text-blue-600">{cadence}</span>
-                  <span className="text-gray-600 ml-2">spm</span>
+                <div className="text-center bg-slate-800/30 rounded-xl py-3 border border-slate-700/50">
+                  <span className="text-4xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{cadence}</span>
+                  <span className="text-slate-500 ml-2 font-semibold">spm</span>
                 </div>
               </div>
             </div>
+            
             <button
               onClick={handlePaceToTime}
-              className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors"
+              className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white py-5 rounded-xl font-black text-lg hover:from-cyan-400 hover:to-blue-400 transition-all duration-200 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-[1.02] active:scale-[0.98]"
             >
-              Calculate Times
+              Calculate Times ⚡
             </button>
             {calculatedTimes && (
-              <div className="mt-6 space-y-3">
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                  Estimated Race Times:
+              <div className="mt-8 space-y-6">
+                <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                  Estimated Race Times
                 </h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">100m</div>
-                    <div className="text-2xl font-bold text-blue-600">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-5 rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
+                    <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">100m</div>
+                    <div className="text-3xl font-black text-white group-hover:text-cyan-400 transition-colors">
                       {calculatedTimes["100m"]}
                     </div>
                   </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">200m</div>
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-5 rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
+                    <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">200m</div>
+                    <div className="text-3xl font-black text-white group-hover:text-cyan-400 transition-colors">
                       {calculatedTimes["200m"]}
                     </div>
                   </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">400m</div>
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-5 rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
+                    <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">400m</div>
+                    <div className="text-3xl font-black text-white group-hover:text-cyan-400 transition-colors">
                       {calculatedTimes["400m"]}
                     </div>
                   </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">1.4K</div>
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-5 rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
+                    <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">1.4K</div>
+                    <div className="text-3xl font-black text-white group-hover:text-cyan-400 transition-colors">
                       {calculatedTimes["1.4k(HV)"]}
                     </div>
                   </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">3K</div>
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-5 rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
+                    <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">3K</div>
+                    <div className="text-3xl font-black text-white group-hover:text-cyan-400 transition-colors">
                       {calculatedTimes["3k"]}
                     </div>
                   </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">5K</div>
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-5 rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
+                    <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">5K</div>
+                    <div className="text-3xl font-black text-white group-hover:text-cyan-400 transition-colors">
                       {calculatedTimes["5k"]}
                     </div>
                   </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">10K</div>
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-5 rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
+                    <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">10K</div>
+                    <div className="text-3xl font-black text-white group-hover:text-cyan-400 transition-colors">
                       {calculatedTimes["10k"]}
                     </div>
                   </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">Half Marathon</div>
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-5 rounded-2xl border border-slate-700 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 group col-span-2 md:col-span-1">
+                    <div className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-1">Half Marathon</div>
+                    <div className="text-3xl font-black text-white group-hover:text-orange-400 transition-colors">
                       {calculatedTimes["half"]}
                     </div>
                   </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">Full Marathon</div>
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-5 rounded-2xl border border-slate-700 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 group col-span-2 md:col-span-1">
+                    <div className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-1">Full Marathon</div>
+                    <div className="text-3xl font-black text-white group-hover:text-orange-400 transition-colors">
                       {calculatedTimes["full"]}
                     </div>
                   </div>
                 </div>
                 {strideLength && (
-                  <div className="mt-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                      Stride Length:
+                  <div className="mt-8">
+                    <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-4">
+                      Stride Analysis
                     </h3>
-                    <div className="bg-purple-50 p-4 rounded-lg">
+                    <div className="bg-gradient-to-br from-purple-900/40 to-pink-900/40 backdrop-blur p-6 rounded-2xl border-2 border-purple-500/50 shadow-lg shadow-purple-500/20">
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-purple-600">
+                        <div className="text-5xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
                           {strideLength} cm
                         </div>
-                        <div className="text-sm text-gray-600 mt-2">
+                        <div className="text-sm text-purple-300 font-semibold">
                           at {cadence} steps/min
                         </div>
                       </div>
@@ -379,18 +387,20 @@ export default function Home() {
 
         {/* Time to Pace Calculator */}
         {activeTab === "time-to-pace" && (
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          <div className="bg-slate-900/40 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-slate-800">
+            <h2 className="text-4xl font-black text-white mb-2">
               Calculate Target Pace from Finish Time
             </h2>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select distance:
+            <p className="text-slate-400 mb-8 text-sm">Set your goal time and discover the pace you need</p>
+            
+            <div className="mb-6">
+              <label className="block text-sm font-bold text-purple-400 mb-3 uppercase tracking-wide">
+                Select Distance
               </label>
               <select
                 value={targetDistance}
                 onChange={(e) => setTargetDistance(e.target.value as any)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-5 py-4 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white text-lg font-bold cursor-pointer transition-all duration-200"
               >
                 <option value="100m">100m</option>
                 <option value="200m">200m</option>
@@ -403,53 +413,56 @@ export default function Home() {
                 <option value="full">Full Marathon</option>
               </select>
             </div>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Target finish time:
+            
+            <div className="mb-8">
+              <label className="block text-sm font-bold text-purple-400 mb-3 uppercase tracking-wide">
+                Target Finish Time
               </label>
-              <div className="flex gap-2 items-center">
+              <div className="flex gap-3 items-center">
                 <input
                   type="number"
                   placeholder="Hours"
                   value={targetHours}
                   onChange={(e) => setTargetHours(e.target.value)}
-                  className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-24 px-5 py-4 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white text-lg font-bold placeholder-slate-600 transition-all duration-200"
                   min="0"
                 />
-                <span className="text-gray-600">:</span>
+                <span className="text-slate-500 text-2xl font-bold">:</span>
                 <input
                   type="number"
-                  placeholder="Minutes"
+                  placeholder="Min"
                   value={targetMinutes}
                   onChange={(e) => setTargetMinutes(e.target.value)}
-                  className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-24 px-5 py-4 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white text-lg font-bold placeholder-slate-600 transition-all duration-200"
                   min="0"
                   max="59"
                 />
-                <span className="text-gray-600">:</span>
+                <span className="text-slate-500 text-2xl font-bold">:</span>
                 <input
                   type="number"
-                  placeholder="Seconds"
+                  placeholder="Sec"
                   value={targetSeconds}
                   onChange={(e) => setTargetSeconds(e.target.value)}
-                  className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-24 px-5 py-4 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white text-lg font-bold placeholder-slate-600 transition-all duration-200"
                   min="0"
                   max="59"
                 />
               </div>
             </div>
+            
             <button
               onClick={handleTimeToPace}
-              className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors"
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-5 rounded-xl font-black text-lg hover:from-purple-400 hover:to-pink-400 transition-all duration-200 shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-[1.02] active:scale-[0.98]"
             >
-              Calculate Pace
+              Calculate Pace ⚡
             </button>
+            
             {calculatedPace && (
-              <div className="mt-6 bg-blue-50 p-6 rounded-lg text-center">
-                <div className="text-sm text-gray-600 mb-2">
-                  Required Pace:
+              <div className="mt-8 bg-gradient-to-br from-purple-900/40 to-pink-900/40 backdrop-blur p-8 rounded-2xl border-2 border-purple-500/50 shadow-lg shadow-purple-500/20 text-center">
+                <div className="text-sm font-bold text-purple-300 uppercase tracking-wider mb-3">
+                  Required Pace
                 </div>
-                <div className="text-4xl font-bold text-blue-600">
+                <div className="text-6xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                   {calculatedPace}
                 </div>
               </div>
@@ -459,21 +472,22 @@ export default function Home() {
 
         {/* VDOT Calculator */}
         {activeTab === "vdot" && (
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          <div className="bg-slate-900/40 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-slate-800">
+            <h2 className="text-4xl font-black text-white mb-2">
               VDOT Race Time Projection
             </h2>
-            <p className="text-sm text-gray-600 mb-4">
-              Enter a recent race result to project performance at other distances.
+            <p className="text-slate-400 mb-8 text-sm">
+              Enter a recent race result to project performance at other distances
             </p>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Race distance:
+            
+            <div className="mb-6">
+              <label className="block text-sm font-bold text-orange-400 mb-3 uppercase tracking-wide">
+                Race Distance
               </label>
               <select
                 value={vdotDistance}
                 onChange={(e) => setVdotDistance(e.target.value as any)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-5 py-4 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white text-lg font-bold cursor-pointer transition-all duration-200"
               >
                 <option value="5k">5K</option>
                 <option value="10k">10K</option>
@@ -481,80 +495,85 @@ export default function Home() {
                 <option value="full">Full Marathon</option>
               </select>
             </div>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Finish time:
+            
+            <div className="mb-8">
+              <label className="block text-sm font-bold text-orange-400 mb-3 uppercase tracking-wide">
+                Finish Time
               </label>
-              <div className="flex gap-2 items-center">
+              <div className="flex gap-3 items-center">
                 <input
                   type="number"
                   placeholder="Hours"
                   value={vdotHours}
                   onChange={(e) => setVdotHours(e.target.value)}
-                  className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-24 px-5 py-4 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white text-lg font-bold placeholder-slate-600 transition-all duration-200"
                   min="0"
                 />
-                <span className="text-gray-600">:</span>
+                <span className="text-slate-500 text-2xl font-bold">:</span>
                 <input
                   type="number"
-                  placeholder="Minutes"
+                  placeholder="Min"
                   value={vdotMinutes}
                   onChange={(e) => setVdotMinutes(e.target.value)}
-                  className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-24 px-5 py-4 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white text-lg font-bold placeholder-slate-600 transition-all duration-200"
                   min="0"
                   max="59"
                 />
-                <span className="text-gray-600">:</span>
+                <span className="text-slate-500 text-2xl font-bold">:</span>
                 <input
                   type="number"
-                  placeholder="Seconds"
+                  placeholder="Sec"
                   value={vdotSeconds}
                   onChange={(e) => setVdotSeconds(e.target.value)}
-                  className="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-24 px-5 py-4 bg-slate-800/50 border-2 border-slate-700 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white text-lg font-bold placeholder-slate-600 transition-all duration-200"
                   min="0"
                   max="59"
                 />
               </div>
             </div>
+            
             <button
               onClick={handleVDOT}
-              className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors"
+              className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-5 rounded-xl font-black text-lg hover:from-orange-400 hover:to-red-400 transition-all duration-200 shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-[1.02] active:scale-[0.98]"
             >
-              Calculate VDOT
+              Calculate VDOT ⚡
             </button>
+            
             {vdotProjections && (
-              <div className="mt-6 space-y-4">
-                <div className="bg-green-50 p-4 rounded-lg text-center">
-                  <div className="text-sm text-gray-600">Your VDOT Score</div>
-                  <div className="text-3xl font-bold text-green-600">
+              <div className="mt-8 space-y-6">
+                <div className="bg-gradient-to-br from-green-900/40 to-emerald-900/40 backdrop-blur p-6 rounded-2xl border-2 border-green-500/50 shadow-lg shadow-green-500/20 text-center">
+                  <div className="text-sm font-bold text-green-300 uppercase tracking-wider mb-2">Your VDOT Score</div>
+                  <div className="text-6xl font-black bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
                     {vdotProjections.vdot}
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Projected Race Times:
+                
+                <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                  Projected Race Times
                 </h3>
+                
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">5K</div>
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-5 rounded-2xl border border-slate-700 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 group">
+                    <div className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-1">5K</div>
+                    <div className="text-3xl font-black text-white group-hover:text-orange-400 transition-colors">
                       {vdotProjections["5k"]}
                     </div>
                   </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">10K</div>
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-5 rounded-2xl border border-slate-700 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 group">
+                    <div className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-1">10K</div>
+                    <div className="text-3xl font-black text-white group-hover:text-orange-400 transition-colors">
                       {vdotProjections["10k"]}
                     </div>
                   </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">Half Marathon</div>
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-5 rounded-2xl border border-slate-700 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 group">
+                    <div className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-1">Half Marathon</div>
+                    <div className="text-3xl font-black text-white group-hover:text-orange-400 transition-colors">
                       {vdotProjections["half"]}
                     </div>
                   </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="text-sm text-gray-600">Full Marathon</div>
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-5 rounded-2xl border border-slate-700 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 group">
+                    <div className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-1">Full Marathon</div>
+                    <div className="text-3xl font-black text-white group-hover:text-orange-400 transition-colors">
                       {vdotProjections["full"]}
                     </div>
                   </div>
