@@ -2,8 +2,112 @@
 
 import { useState } from "react";
 
+// Language translations
+const translations = {
+  en: {
+    title: "Running Calculator",
+    subtitle: "Calculating your pain, one step at a time.",
+    tabs: {
+      paceToTime: "Pace → Time",
+      timeToPace: "Time → Pace",
+      vdot: "VDOT",
+    },
+    paceToTime: {
+      title: "Pace to Times",
+      subtitle: "Enter target pace and see projected finish times",
+      paceLabel: "Your Pace per km",
+      cadenceLabel: "Cadence (spm)",
+      button: "Calculate Times ⚡",
+      raceTimes: "Race Times",
+      stride: "Stride",
+      stepsMin: "steps/min",
+    },
+    timeToPace: {
+      title: "Time to Pace",
+      subtitle: "Set goal time and discover the pace you need",
+      distanceLabel: "Distance",
+      targetTimeLabel: "Target Time",
+      button: "Calculate Pace ⚡",
+      requiredPace: "Required Pace",
+    },
+    vdot: {
+      title: "VDOT Projection",
+      subtitle: "Enter recent race to project other distances",
+      raceDistanceLabel: "Race Distance",
+      finishTimeLabel: "Finish Time",
+      button: "Calculate VDOT ⚡",
+      vdotScore: "VDOT Score",
+      projectedTimes: "Projected Times",
+    },
+    distances: {
+      "100m": "100m",
+      "200m": "200m",
+      "400m": "400m",
+      "1.4k": "1.4K (HV)",
+      "3k": "3K",
+      "5k": "5K",
+      "10k": "10K",
+      half: "Half Marathon",
+      full: "Full Marathon",
+      halfShort: "Half",
+      fullShort: "Full",
+    },
+  },
+  zh: {
+    title: "跑步計算神器",
+    subtitle: "數據唔會呃人 但出口術既人會",
+    tabs: {
+      paceToTime: "配速 → 時間",
+      timeToPace: "時間 → 配速",
+      vdot: "VDOT",
+    },
+    paceToTime: {
+      title: "配速計時間",
+      subtitle: "輸入目標配速,睇預計完成時間",
+      paceLabel: "你嘅配速(每公里)",
+      cadenceLabel: "步頻(每分鐘步數)",
+      button: "計算時間 ⚡",
+      raceTimes: "比賽時間",
+      stride: "步幅",
+      stepsMin: "步/分鐘",
+    },
+    timeToPace: {
+      title: "時間計配速",
+      subtitle: "設定目標時間,搵出你需要嘅配速",
+      distanceLabel: "距離",
+      targetTimeLabel: "目標時間",
+      button: "計算配速 ⚡",
+      requiredPace: "需要配速",
+    },
+    vdot: {
+      title: "VDOT 預測",
+      subtitle: "輸入最近比賽成績,預測其他距離表現",
+      raceDistanceLabel: "比賽距離",
+      finishTimeLabel: "完成時間",
+      button: "計算 VDOT ⚡",
+      vdotScore: "VDOT 分數",
+      projectedTimes: "預測時間",
+    },
+    distances: {
+      "100m": "100米",
+      "200m": "200米",
+      "400m": "400米",
+      "1.4k": "1.4公里(跑馬地)",
+      "3k": "3公里",
+      "5k": "5公里",
+      "10k": "10公里",
+      half: "半馬拉松",
+      full: "全馬拉松",
+      halfShort: "半馬",
+      fullShort: "全馬",
+    },
+  },
+};
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"pace-to-time" | "time-to-pace" | "vdot">("pace-to-time");
+  const [lang, setLang] = useState<"en" | "zh">("zh");
+  const t = translations[lang];
   
   // Pace to Time states
   const [paceMinutes, setPaceMinutes] = useState("");
@@ -199,12 +303,38 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 py-4 md:py-12 px-3 md:px-4">
       <div className="max-w-5xl mx-auto">
+        {/* Language Toggle */}
+        <div className="flex justify-end mb-2 md:mb-4">
+          <div className="flex gap-1 bg-slate-900/50 backdrop-blur-sm rounded-lg p-1 border border-slate-800">
+            <button
+              onClick={() => setLang("en")}
+              className={`px-3 py-1.5 rounded text-xs md:text-sm font-bold transition-all duration-200 ${
+                lang === "en"
+                  ? "bg-cyan-500 text-white"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => setLang("zh")}
+              className={`px-3 py-1.5 rounded text-xs md:text-sm font-bold transition-all duration-200 ${
+                lang === "zh"
+                  ? "bg-cyan-500 text-white"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              講
+            </button>
+          </div>
+        </div>
+
         {/* Hero Header with Bold Typography */}
         <div className="text-center mb-4 md:mb-10">
           <h1 className="text-3xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 mb-1 md:mb-3 tracking-tight">
-            Running Calculator
+            {t.title}
           </h1>
-          <p className="text-sm md:text-lg text-slate-400 font-medium">Train smarter with precision pace and stride analytics</p>
+          <p className="text-sm md:text-lg text-slate-400 font-medium">{t.subtitle}</p>
         </div>
 
         {/* Tab Navigation - Neo-brutalist with bold contrast */}
@@ -217,7 +347,7 @@ export default function Home() {
                 : "text-slate-400 hover:text-white hover:bg-slate-800/50 hover:scale-102"
             }`}
           >
-            Pace → Time
+            {t.tabs.paceToTime}
           </button>
           <button
             onClick={() => setActiveTab("time-to-pace")}
@@ -227,7 +357,7 @@ export default function Home() {
                 : "text-slate-400 hover:text-white hover:bg-slate-800/50 hover:scale-102"
             }`}
           >
-            Time → Pace
+            {t.tabs.timeToPace}
           </button>
           <button
             onClick={() => setActiveTab("vdot")}
@@ -237,7 +367,7 @@ export default function Home() {
                 : "text-slate-400 hover:text-white hover:bg-slate-800/50 hover:scale-102"
             }`}
           >
-            VDOT
+            {t.tabs.vdot}
           </button>
         </div>
 
@@ -245,13 +375,13 @@ export default function Home() {
         {activeTab === "pace-to-time" && (
           <div className="bg-slate-900/40 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl p-4 md:p-8 border border-slate-800">
             <h2 className="text-2xl md:text-4xl font-black text-white mb-1 md:mb-2">
-              Pace to Times
+              {t.paceToTime.title}
             </h2>
-            <p className="text-slate-400 mb-4 md:mb-8 text-xs md:text-sm">Enter target pace and see projected finish times</p>
+            <p className="text-slate-400 mb-4 md:mb-8 text-xs md:text-sm">{t.paceToTime.subtitle}</p>
             
             <div className="mb-4 md:mb-8">
               <label className="block text-xs md:text-sm font-bold text-cyan-400 mb-2 md:mb-3 uppercase tracking-wide">
-                Your Pace per km
+                {t.paceToTime.paceLabel}
               </label>
               <div className="flex gap-2 md:gap-3 items-center">
                 <input
@@ -278,7 +408,7 @@ export default function Home() {
             
             <div className="mb-4 md:mb-8">
               <label className="block text-xs md:text-sm font-bold text-purple-400 mb-2 md:mb-3 uppercase tracking-wide">
-                Cadence (spm)
+                {t.paceToTime.cadenceLabel}
               </label>
               <div className="space-y-2 md:space-y-4">
                 <input
@@ -300,64 +430,64 @@ export default function Home() {
               onClick={handlePaceToTime}
               className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white py-3 md:py-5 rounded-lg md:rounded-xl font-black text-sm md:text-lg hover:from-cyan-400 hover:to-blue-400 transition-all duration-200 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-[1.02] active:scale-[0.98]"
             >
-              Calculate Times ⚡
+              {t.paceToTime.button}
             </button>
             {calculatedTimes && (
               <div className="mt-4 md:mt-8 space-y-3 md:space-y-6">
                 <h3 className="text-base md:text-2xl font-black text-white uppercase tracking-tight">
-                  Race Times
+                  {t.paceToTime.raceTimes}
                 </h3>
                 <div className="grid grid-cols-3 md:grid-cols-3 gap-2 md:gap-4">
                   <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-2 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
-                    <div className="text-[10px] md:text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5 md:mb-1">100m</div>
+                    <div className="text-[10px] md:text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5 md:mb-1">{t.distances["100m"]}</div>
                     <div className="text-base md:text-3xl font-black text-white group-hover:text-cyan-400 transition-colors">
                       {calculatedTimes["100m"]}
                     </div>
                   </div>
                   <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-2 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
-                    <div className="text-[10px] md:text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5 md:mb-1">200m</div>
+                    <div className="text-[10px] md:text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5 md:mb-1">{t.distances["200m"]}</div>
                     <div className="text-base md:text-3xl font-black text-white group-hover:text-cyan-400 transition-colors">
                       {calculatedTimes["200m"]}
                     </div>
                   </div>
                   <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-2 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
-                    <div className="text-[10px] md:text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5 md:mb-1">400m</div>
+                    <div className="text-[10px] md:text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5 md:mb-1">{t.distances["400m"]}</div>
                     <div className="text-base md:text-3xl font-black text-white group-hover:text-cyan-400 transition-colors">
                       {calculatedTimes["400m"]}
                     </div>
                   </div>
                   <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-2 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
-                    <div className="text-[10px] md:text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5 md:mb-1">1.4K</div>
+                    <div className="text-[10px] md:text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5 md:mb-1">{t.distances["1.4k"]}</div>
                     <div className="text-base md:text-3xl font-black text-white group-hover:text-cyan-400 transition-colors">
                       {calculatedTimes["1.4k(HV)"]}
                     </div>
                   </div>
                   <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-2 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
-                    <div className="text-[10px] md:text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5 md:mb-1">3K</div>
+                    <div className="text-[10px] md:text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5 md:mb-1">{t.distances["3k"]}</div>
                     <div className="text-base md:text-3xl font-black text-white group-hover:text-cyan-400 transition-colors">
                       {calculatedTimes["3k"]}
                     </div>
                   </div>
                   <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-2 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
-                    <div className="text-[10px] md:text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5 md:mb-1">5K</div>
+                    <div className="text-[10px] md:text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5 md:mb-1">{t.distances["5k"]}</div>
                     <div className="text-base md:text-3xl font-black text-white group-hover:text-cyan-400 transition-colors">
                       {calculatedTimes["5k"]}
                     </div>
                   </div>
                   <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-2 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
-                    <div className="text-[10px] md:text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5 md:mb-1">10K</div>
+                    <div className="text-[10px] md:text-xs font-bold text-cyan-400 uppercase tracking-wider mb-0.5 md:mb-1">{t.distances["10k"]}</div>
                     <div className="text-base md:text-3xl font-black text-white group-hover:text-cyan-400 transition-colors">
                       {calculatedTimes["10k"]}
                     </div>
                   </div>
                   <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-2 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 group">
-                    <div className="text-[10px] md:text-xs font-bold text-orange-400 uppercase tracking-wider mb-0.5 md:mb-1">Half</div>
+                    <div className="text-[10px] md:text-xs font-bold text-orange-400 uppercase tracking-wider mb-0.5 md:mb-1">{t.distances.halfShort}</div>
                     <div className="text-base md:text-3xl font-black text-white group-hover:text-orange-400 transition-colors">
                       {calculatedTimes["half"]}
                     </div>
                   </div>
                   <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-2 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 group">
-                    <div className="text-[10px] md:text-xs font-bold text-orange-400 uppercase tracking-wider mb-0.5 md:mb-1">Full</div>
+                    <div className="text-[10px] md:text-xs font-bold text-orange-400 uppercase tracking-wider mb-0.5 md:mb-1">{t.distances.fullShort}</div>
                     <div className="text-base md:text-3xl font-black text-white group-hover:text-orange-400 transition-colors">
                       {calculatedTimes["full"]}
                     </div>
@@ -366,7 +496,7 @@ export default function Home() {
                 {strideLength && (
                   <div className="mt-4 md:mt-8">
                     <h3 className="text-base md:text-2xl font-black text-white uppercase tracking-tight mb-2 md:mb-4">
-                      Stride
+                      {t.paceToTime.stride}
                     </h3>
                     <div className="bg-gradient-to-br from-purple-900/40 to-pink-900/40 backdrop-blur p-4 md:p-6 rounded-xl md:rounded-2xl border-2 border-purple-500/50 shadow-lg shadow-purple-500/20">
                       <div className="text-center">
@@ -374,7 +504,7 @@ export default function Home() {
                           {strideLength} cm
                         </div>
                         <div className="text-xs md:text-sm text-purple-300 font-semibold">
-                          at {cadence} steps/min
+                          {cadence} {t.paceToTime.stepsMin}
                         </div>
                       </div>
                     </div>
@@ -389,34 +519,34 @@ export default function Home() {
         {activeTab === "time-to-pace" && (
           <div className="bg-slate-900/40 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl p-4 md:p-8 border border-slate-800">
             <h2 className="text-2xl md:text-4xl font-black text-white mb-1 md:mb-2">
-              Time to Pace
+              {t.timeToPace.title}
             </h2>
-            <p className="text-slate-400 mb-4 md:mb-8 text-xs md:text-sm">Set goal time and discover the pace you need</p>
+            <p className="text-slate-400 mb-4 md:mb-8 text-xs md:text-sm">{t.timeToPace.subtitle}</p>
             
             <div className="mb-4 md:mb-6">
               <label className="block text-xs md:text-sm font-bold text-purple-400 mb-2 md:mb-3 uppercase tracking-wide">
-                Distance
+                {t.timeToPace.distanceLabel}
               </label>
               <select
                 value={targetDistance}
                 onChange={(e) => setTargetDistance(e.target.value as any)}
                 className="w-full px-3 md:px-5 py-2 md:py-4 bg-slate-800/50 border-2 border-slate-700 rounded-lg md:rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-white text-base md:text-lg font-bold cursor-pointer transition-all duration-200"
               >
-                <option value="100m">100m</option>
-                <option value="200m">200m</option>
-                <option value="400m">400m</option>
-                <option value="1.4k(HV)">1.4K (HV)</option>
-                <option value="3k">3K</option>
-                <option value="5k">5K</option>
-                <option value="10k">10K</option>
-                <option value="half">Half Marathon</option>
-                <option value="full">Full Marathon</option>
+                <option value="100m">{t.distances["100m"]}</option>
+                <option value="200m">{t.distances["200m"]}</option>
+                <option value="400m">{t.distances["400m"]}</option>
+                <option value="1.4k(HV)">{t.distances["1.4k"]}</option>
+                <option value="3k">{t.distances["3k"]}</option>
+                <option value="5k">{t.distances["5k"]}</option>
+                <option value="10k">{t.distances["10k"]}</option>
+                <option value="half">{t.distances.half}</option>
+                <option value="full">{t.distances.full}</option>
               </select>
             </div>
             
             <div className="mb-4 md:mb-8">
               <label className="block text-xs md:text-sm font-bold text-purple-400 mb-2 md:mb-3 uppercase tracking-wide">
-                Target Time
+                {t.timeToPace.targetTimeLabel}
               </label>
               <div className="flex gap-2 md:gap-3 items-center">
                 <input
@@ -454,13 +584,13 @@ export default function Home() {
               onClick={handleTimeToPace}
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 md:py-5 rounded-lg md:rounded-xl font-black text-sm md:text-lg hover:from-purple-400 hover:to-pink-400 transition-all duration-200 shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-[1.02] active:scale-[0.98]"
             >
-              Calculate Pace ⚡
+              {t.timeToPace.button}
             </button>
             
             {calculatedPace && (
               <div className="mt-4 md:mt-8 bg-gradient-to-br from-purple-900/40 to-pink-900/40 backdrop-blur p-6 md:p-8 rounded-xl md:rounded-2xl border-2 border-purple-500/50 shadow-lg shadow-purple-500/20 text-center">
                 <div className="text-xs md:text-sm font-bold text-purple-300 uppercase tracking-wider mb-2 md:mb-3">
-                  Required Pace
+                  {t.timeToPace.requiredPace}
                 </div>
                 <div className="text-4xl md:text-6xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                   {calculatedPace}
@@ -474,31 +604,31 @@ export default function Home() {
         {activeTab === "vdot" && (
           <div className="bg-slate-900/40 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl p-4 md:p-8 border border-slate-800">
             <h2 className="text-2xl md:text-4xl font-black text-white mb-1 md:mb-2">
-              VDOT Projection
+              {t.vdot.title}
             </h2>
             <p className="text-slate-400 mb-4 md:mb-8 text-xs md:text-sm">
-              Enter recent race to project other distances
+              {t.vdot.subtitle}
             </p>
             
             <div className="mb-4 md:mb-6">
               <label className="block text-xs md:text-sm font-bold text-orange-400 mb-2 md:mb-3 uppercase tracking-wide">
-                Race Distance
+                {t.vdot.raceDistanceLabel}
               </label>
               <select
                 value={vdotDistance}
                 onChange={(e) => setVdotDistance(e.target.value as any)}
                 className="w-full px-3 md:px-5 py-2 md:py-4 bg-slate-800/50 border-2 border-slate-700 rounded-lg md:rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white text-base md:text-lg font-bold cursor-pointer transition-all duration-200"
               >
-                <option value="5k">5K</option>
-                <option value="10k">10K</option>
-                <option value="half">Half Marathon</option>
-                <option value="full">Full Marathon</option>
+                <option value="5k">{t.distances["5k"]}</option>
+                <option value="10k">{t.distances["10k"]}</option>
+                <option value="half">{t.distances.half}</option>
+                <option value="full">{t.distances.full}</option>
               </select>
             </div>
             
             <div className="mb-4 md:mb-8">
               <label className="block text-xs md:text-sm font-bold text-orange-400 mb-2 md:mb-3 uppercase tracking-wide">
-                Finish Time
+                {t.vdot.finishTimeLabel}
               </label>
               <div className="flex gap-2 md:gap-3 items-center">
                 <input
@@ -536,43 +666,43 @@ export default function Home() {
               onClick={handleVDOT}
               className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 md:py-5 rounded-lg md:rounded-xl font-black text-sm md:text-lg hover:from-orange-400 hover:to-red-400 transition-all duration-200 shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-[1.02] active:scale-[0.98]"
             >
-              Calculate VDOT ⚡
+              {t.vdot.button}
             </button>
             
             {vdotProjections && (
               <div className="mt-4 md:mt-8 space-y-3 md:space-y-6">
                 <div className="bg-gradient-to-br from-green-900/40 to-emerald-900/40 backdrop-blur p-4 md:p-6 rounded-xl md:rounded-2xl border-2 border-green-500/50 shadow-lg shadow-green-500/20 text-center">
-                  <div className="text-xs md:text-sm font-bold text-green-300 uppercase tracking-wider mb-1 md:mb-2">VDOT Score</div>
+                  <div className="text-xs md:text-sm font-bold text-green-300 uppercase tracking-wider mb-1 md:mb-2">{t.vdot.vdotScore}</div>
                   <div className="text-4xl md:text-6xl font-black bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
                     {vdotProjections.vdot}
                   </div>
                 </div>
                 
                 <h3 className="text-base md:text-2xl font-black text-white uppercase tracking-tight">
-                  Projected Times
+                  {t.vdot.projectedTimes}
                 </h3>
                 
                 <div className="grid grid-cols-2 gap-2 md:gap-4">
                   <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-3 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 group">
-                    <div className="text-[10px] md:text-xs font-bold text-orange-400 uppercase tracking-wider mb-0.5 md:mb-1">5K</div>
+                    <div className="text-[10px] md:text-xs font-bold text-orange-400 uppercase tracking-wider mb-0.5 md:mb-1">{t.distances["5k"]}</div>
                     <div className="text-xl md:text-3xl font-black text-white group-hover:text-orange-400 transition-colors">
                       {vdotProjections["5k"]}
                     </div>
                   </div>
                   <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-3 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 group">
-                    <div className="text-[10px] md:text-xs font-bold text-orange-400 uppercase tracking-wider mb-0.5 md:mb-1">10K</div>
+                    <div className="text-[10px] md:text-xs font-bold text-orange-400 uppercase tracking-wider mb-0.5 md:mb-1">{t.distances["10k"]}</div>
                     <div className="text-xl md:text-3xl font-black text-white group-hover:text-orange-400 transition-colors">
                       {vdotProjections["10k"]}
                     </div>
                   </div>
                   <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-3 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 group">
-                    <div className="text-[10px] md:text-xs font-bold text-orange-400 uppercase tracking-wider mb-0.5 md:mb-1">Half</div>
+                    <div className="text-[10px] md:text-xs font-bold text-orange-400 uppercase tracking-wider mb-0.5 md:mb-1">{t.distances.halfShort}</div>
                     <div className="text-xl md:text-3xl font-black text-white group-hover:text-orange-400 transition-colors">
                       {vdotProjections["half"]}
                     </div>
                   </div>
                   <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-3 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 group">
-                    <div className="text-[10px] md:text-xs font-bold text-orange-400 uppercase tracking-wider mb-0.5 md:mb-1">Full</div>
+                    <div className="text-[10px] md:text-xs font-bold text-orange-400 uppercase tracking-wider mb-0.5 md:mb-1">{t.distances.fullShort}</div>
                     <div className="text-xl md:text-3xl font-black text-white group-hover:text-orange-400 transition-colors">
                       {vdotProjections["full"]}
                     </div>
@@ -582,6 +712,65 @@ export default function Home() {
             )}
           </div>
         )}
+
+        {/* Footer Credit */}
+        <footer className="mt-8 md:mt-12 pb-4">
+          <div className="flex items-center justify-center gap-4 md:gap-6">
+            {/* Instagram */}
+            <a 
+              href="https://instagram.com/powerkonghk" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-slate-400 hover:text-pink-400 transition-all duration-200 group"
+              title="Instagram"
+            >
+              <svg 
+                className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform duration-200" 
+                fill="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+              <span className="text-xs md:text-sm font-semibold hidden md:inline">@powerkonghk</span>
+            </a>
+
+            {/* Strava */}
+            <a 
+              href="https://www.strava.com/athletes/40195352" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-slate-400 hover:text-orange-400 transition-all duration-200 group"
+              title="Strava"
+            >
+              <svg 
+                className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform duration-200" 
+                fill="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+              </svg>
+              <span className="text-xs md:text-sm font-semibold hidden md:inline">Strava</span>
+            </a>
+
+            {/* YouTube */}
+            <a 
+              href="https://www.youtube.com/powerkonghk" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-slate-400 hover:text-red-400 transition-all duration-200 group"
+              title="YouTube"
+            >
+              <svg 
+                className="w-5 h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform duration-200" 
+                fill="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
+              <span className="text-xs md:text-sm font-semibold hidden md:inline">YouTube</span>
+            </a>
+          </div>
+        </footer>
 
 
       </div>
