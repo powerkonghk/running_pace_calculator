@@ -588,12 +588,61 @@ export default function Home() {
             </button>
             
             {calculatedPace && (
-              <div className="mt-4 md:mt-8 bg-gradient-to-br from-purple-900/40 to-pink-900/40 backdrop-blur p-6 md:p-8 rounded-xl md:rounded-2xl border-2 border-purple-500/50 shadow-lg shadow-purple-500/20 text-center">
-                <div className="text-xs md:text-sm font-bold text-purple-300 uppercase tracking-wider mb-2 md:mb-3">
-                  {t.timeToPace.requiredPace}
+              <div className="mt-4 md:mt-8 space-y-4">
+                <div className="bg-gradient-to-br from-purple-900/40 to-pink-900/40 backdrop-blur p-6 md:p-8 rounded-xl md:rounded-2xl border-2 border-purple-500/50 shadow-lg shadow-purple-500/20 text-center">
+                  <div className="text-xs md:text-sm font-bold text-purple-300 uppercase tracking-wider mb-2 md:mb-3">
+                    {t.timeToPace.requiredPace}
+                  </div>
+                  <div className="text-4xl md:text-6xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    {calculatedPace}
+                  </div>
                 </div>
-                <div className="text-4xl md:text-6xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                  {calculatedPace}
+                
+                {/* Equivalent Laps Display */}
+                <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-4 md:p-6 rounded-xl md:rounded-2xl border border-slate-700">
+                  <div className="text-xs md:text-sm font-bold text-cyan-400 uppercase tracking-wider mb-4 text-center">
+                    {lang === "en" ? "Equivalent Laps" : "等於圈數"}
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 md:gap-4">
+                    {/* 400m laps */}
+                    <div className="text-center p-3 bg-slate-900/50 rounded-lg border border-slate-700">
+                      <div className="text-2xl md:text-3xl font-black text-white">
+                        {(() => {
+                          const distances: Record<string, number> = {
+                            "100m": 0.1, "200m": 0.2, "400m": 0.4, "1.4k(HV)": 1.4,
+                            "3k": 3, "5k": 5, "10k": 10, "half": 21.0975, "full": 42.195
+                          };
+                          const distanceKm = distances[targetDistance];
+                          const laps = (distanceKm * 1000) / 400;
+                          return laps % 1 === 0 ? laps.toFixed(0) : laps.toFixed(1);
+                        })()}
+                      </div>
+                      <div className="text-xs md:text-sm text-slate-400 mt-1">
+                        {lang === "en" ? "400m laps" : "400米圈"}
+                      </div>
+                    </div>
+                    
+                    {/* 1.4k HV laps */}
+                    <div className="text-center p-3 bg-slate-900/50 rounded-lg border border-slate-700">
+                      <div className="text-2xl md:text-3xl font-black text-white">
+                        {(() => {
+                          const distances: Record<string, number> = {
+                            "100m": 0.1, "200m": 0.2, "400m": 0.4, "1.4k(HV)": 1.4,
+                            "3k": 3, "5k": 5, "10k": 10, "half": 21.0975, "full": 42.195
+                          };
+                          const distanceKm = distances[targetDistance];
+                          const laps = distanceKm / 1.4;
+                          return laps % 1 === 0 ? laps.toFixed(0) : laps.toFixed(2);
+                        })()}
+                      </div>
+                      <div className="text-xs md:text-sm text-slate-400 mt-1">
+                        {lang === "en" ? "1.4k HV laps" : "1.4跑馬地外圈"}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-slate-500 mt-3 text-center">
+                    {lang === "en" ? "(Standard track reference)" : "(標準跑道參考)"}
+                  </div>
                 </div>
               </div>
             )}
