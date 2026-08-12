@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Language translations
 const translations = {
@@ -11,6 +11,7 @@ const translations = {
       paceToTime: "Pace → Time",
       timeToPace: "Time → Pace",
       vdot: "VDOT",
+      laps: "Laps",
     },
     paceToTime: {
       title: "Pace to Times",
@@ -21,6 +22,10 @@ const translations = {
       raceTimes: "Race Times",
       stride: "Stride",
       stepsMin: "steps/min",
+      percentLabel: "Percentage of Pace",
+      adjustedPace: "Adjusted Pace",
+      faster: "faster",
+      slower: "slower",
     },
     timeToPace: {
       title: "Time to Pace",
@@ -38,6 +43,18 @@ const translations = {
       button: "Calculate VDOT ⚡",
       vdotScore: "VDOT Score",
       projectedTimes: "Projected Times",
+    },
+    laps: {
+      title: "Laps Calculator",
+      subtitle: "Calculate laps needed for your target distance",
+      targetDistanceLabel: "Target Distance",
+      targetDistancePlaceholder: "Enter distance (km)",
+      button: "Calculate Laps ⚡",
+      lapResults: "Laps Required",
+      track400m: "400m Track",
+      track1_4k: "1.4K HV Loop",
+      track3k: "3K Loop",
+      laps: "laps",
     },
     distances: {
       "100m": "100m",
@@ -60,6 +77,7 @@ const translations = {
       paceToTime: "配速 → 時間",
       timeToPace: "時間 → 配速",
       vdot: "VDOT",
+      laps: "圈數",
     },
     paceToTime: {
       title: "配速計時間",
@@ -70,6 +88,10 @@ const translations = {
       raceTimes: "比賽時間",
       stride: "步幅",
       stepsMin: "步/分鐘",
+      percentLabel: "配速百分比",
+      adjustedPace: "調整後配速",
+      faster: "快咗",
+      slower: "慢咗",
     },
     timeToPace: {
       title: "時間計配速",
@@ -88,6 +110,18 @@ const translations = {
       vdotScore: "VDOT 分數",
       projectedTimes: "預測時間",
     },
+    laps: {
+      title: "圈數計算器",
+      subtitle: "計算達成目標距離需要跑幾多圈",
+      targetDistanceLabel: "目標距離",
+      targetDistancePlaceholder: "輸入距離 (公里)",
+      button: "計算圈數 ⚡",
+      lapResults: "需要圈數",
+      track400m: "400米跑道",
+      track1_4k: "1.4K 跑馬地外圈",
+      track3k: "3K 圈",
+      laps: "圈",
+    },
     distances: {
       "100m": "100米",
       "200m": "200米",
@@ -105,13 +139,15 @@ const translations = {
 };
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"pace-to-time" | "time-to-pace" | "vdot">("pace-to-time");
+  const [activeTab, setActiveTab] = useState<"pace-to-time" | "time-to-pace" | "vdot" | "laps">("pace-to-time");
   const [lang, setLang] = useState<"en" | "zh">("zh");
   const t = translations[lang];
   
   // Pace to Time states
   const [paceMinutes, setPaceMinutes] = useState("");
   const [paceSeconds, setPaceSeconds] = useState("");
+  const [pacePercent, setPacePercent] = useState("100");
+  const [adjustedPaceDisplay, setAdjustedPaceDisplay] = useState<string | null>(null);
   const [calculatedTimes, setCalculatedTimes] = useState<{
     "100m": string;
     "200m": string;
@@ -142,6 +178,14 @@ export default function Home() {
     "10k": string;
     "half": string;
     "full": string;
+  } | null>(null);
+
+  // Laps Calculator states
+  const [lapsTargetDistance, setLapsTargetDistance] = useState("");
+  const [lapsResult, setLapsResult] = useState<{
+    track400m: number;
+    track1_4k: number;
+    track3k: number;
   } | null>(null);
 
   // Stride Length states
@@ -191,37 +235,51 @@ export default function Home() {
     return timeSeconds;
   };
 
+  const formatPaceString = (paceSecs: number): string => {
+    const m = Math.floor(paceSecs / 60);
+    const s = Math.round(paceSecs % 60);
+    return `${m}:${s.toString().padStart(2, '0')}/km`;
+  };
+
+  // Percentage refers to speed/effort: lower % = slower = longer pace
+  const getAdjustedPaceSeconds = (pacePerKmSeconds: number): number => {
+    const percent = parseFloat(pacePercent);
+    const validPercent = !isNaN(percent) && percent > 0 ? percent : 100;
+    return pacePerKmSeconds / (validPercent / 100);
+  };
+
   const handlePaceToTime = () => {
     const mins = parseInt(paceMinutes) || 0;
     const secs = parseInt(paceSeconds) || 0;
     const pacePerKmSeconds = mins * 60 + secs;
     
-    if (pacePerKmSeconds <= 0) return;
+    if (pacePerKmSeconds <= 0) {
+      setAdjustedPaceDisplay(null);
+      setCalculatedTimes(null);
+      setStrideLength(null);
+      return;
+    }
+
+    // Race times are based on the adjusted pace
+    const adjustedPaceSeconds = getAdjustedPaceSeconds(pacePerKmSeconds);
+    setAdjustedPaceDisplay(formatPaceString(adjustedPaceSeconds));
 
     const times = {
-      "100m": formatTime((pacePerKmSeconds / 1000) * 100),
-      "200m": formatTime((pacePerKmSeconds / 1000) * 200),
-      "400m": formatTime((pacePerKmSeconds / 1000) * 400),
-      "1.4k(HV)": formatTime(pacePerKmSeconds * 1.4),
-      "3k": formatTime(pacePerKmSeconds * 3),
-      "5k": formatTime(pacePerKmSeconds * 5),
-      "10k": formatTime(pacePerKmSeconds * 10),
-      "half": formatTime(pacePerKmSeconds * 21.0975),
-      "full": formatTime(pacePerKmSeconds * 42.195),
+      "100m": formatTime((adjustedPaceSeconds / 1000) * 100),
+      "200m": formatTime((adjustedPaceSeconds / 1000) * 200),
+      "400m": formatTime((adjustedPaceSeconds / 1000) * 400),
+      "1.4k(HV)": formatTime(adjustedPaceSeconds * 1.4),
+      "3k": formatTime(adjustedPaceSeconds * 3),
+      "5k": formatTime(adjustedPaceSeconds * 5),
+      "10k": formatTime(adjustedPaceSeconds * 10),
+      "half": formatTime(adjustedPaceSeconds * 21.0975),
+      "full": formatTime(adjustedPaceSeconds * 42.195),
     };
     setCalculatedTimes(times);
 
     // Calculate stride length
-    calculateStrideLength();
-  };
-
-  const calculateStrideLength = () => {
-    const mins = parseInt(paceMinutes) || 0;
-    const secs = parseInt(paceSeconds) || 0;
-    const pacePerKmSeconds = mins * 60 + secs;
-    
-    if (pacePerKmSeconds > 0 && cadence > 0) {
-      const speedMperMin = 1000 / (pacePerKmSeconds / 60);
+    if (cadence > 0) {
+      const speedMperMin = 1000 / (adjustedPaceSeconds / 60);
       const strideLengthMeters = speedMperMin / cadence;
       setStrideLength(Math.round(strideLengthMeters * 1000) / 10);
     } else {
@@ -229,19 +287,11 @@ export default function Home() {
     }
   };
 
-  const handleCadenceChange = (newCadence: number) => {
-    setCadence(newCadence);
-    // Recalculate stride length immediately when cadence changes
-    const mins = parseInt(paceMinutes) || 0;
-    const secs = parseInt(paceSeconds) || 0;
-    const pacePerKmSeconds = mins * 60 + secs;
-    
-    if (pacePerKmSeconds > 0 && newCadence > 0) {
-      const speedMperMin = 1000 / (pacePerKmSeconds / 60);
-      const strideLengthMeters = speedMperMin / newCadence;
-      setStrideLength(Math.round(strideLengthMeters * 1000) / 10);
-    }
-  };
+  // Auto-recalculate on any input change (pace, percentage or cadence)
+  useEffect(() => {
+    handlePaceToTime();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paceMinutes, paceSeconds, pacePercent, cadence]);
 
   const handleTimeToPace = () => {
     const hours = parseInt(targetHours) || 0;
@@ -296,6 +346,17 @@ export default function Home() {
     };
     
     setVdotProjections(projections);
+  };
+
+  const handleLapsCalculate = () => {
+    const distanceKm = parseFloat(lapsTargetDistance);
+    if (isNaN(distanceKm) || distanceKm <= 0) return;
+
+    setLapsResult({
+      track400m: distanceKm / 0.4,
+      track1_4k: distanceKm / 1.4,
+      track3k: distanceKm / 3,
+    });
   };
 
 
@@ -369,6 +430,16 @@ export default function Home() {
           >
             {t.tabs.vdot}
           </button>
+          <button
+            onClick={() => setActiveTab("laps")}
+            className={`flex-1 py-2 md:py-4 px-2 md:px-6 rounded-lg md:rounded-xl font-bold text-xs md:text-base transition-all duration-300 transform ${
+              activeTab === "laps"
+                ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/50 scale-105"
+                : "text-slate-400 hover:text-white hover:bg-slate-800/50 hover:scale-102"
+            }`}
+          >
+            {t.tabs.laps}
+          </button>
         </div>
 
         {/* Pace to Time Calculator */}
@@ -407,6 +478,52 @@ export default function Home() {
             </div>
             
             <div className="mb-4 md:mb-8">
+              <label className="block text-xs md:text-sm font-bold text-blue-400 mb-2 md:mb-3 uppercase tracking-wide">
+                {t.paceToTime.percentLabel}
+              </label>
+              <div className="space-y-2 md:space-y-4">
+                <input
+                  type="range"
+                  min="50"
+                  max="150"
+                  value={Math.min(150, Math.max(50, parseFloat(pacePercent) || 100))}
+                  onChange={(e) => setPacePercent(e.target.value)}
+                  className="w-full h-2 md:h-3 bg-slate-800/50 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 md:[&::-webkit-slider-thumb]:w-6 md:[&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-r [&::-webkit-slider-thumb]:from-cyan-500 [&::-webkit-slider-thumb]:to-blue-500 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:shadow-cyan-500/50 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-125"
+                />
+                <div className="flex gap-2 md:gap-3 items-center">
+                  <input
+                    type="number"
+                    value={pacePercent}
+                    onChange={(e) => setPacePercent(e.target.value)}
+                    className="w-24 md:w-32 px-3 md:px-5 py-2 md:py-4 bg-slate-800/50 border-2 border-slate-700 rounded-lg md:rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-white text-base md:text-lg font-bold placeholder-slate-600 transition-all duration-200"
+                    min="1"
+                    step="1"
+                  />
+                  <span className="text-slate-400 font-semibold text-sm md:text-lg">%</span>
+                  <div className="flex gap-1 md:gap-2 ml-auto">
+                    {[80, 83, 90, 110].map((p) => (
+                      <button
+                        key={p}
+                        onClick={() => setPacePercent(String(p))}
+                        className={`px-2 md:px-3 py-1 md:py-2 rounded-lg text-xs md:text-sm font-bold border transition-all duration-200 ${
+                          pacePercent === String(p)
+                            ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-transparent"
+                            : "bg-slate-800/50 text-slate-400 border-slate-700 hover:text-white hover:border-cyan-500/50"
+                        }`}
+                      >
+                        {p}%
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="text-center bg-slate-800/30 rounded-lg md:rounded-xl py-2 md:py-3 border border-slate-700/50">
+                  <span className="text-2xl md:text-4xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">{pacePercent}</span>
+                  <span className="text-slate-500 ml-1 md:ml-2 font-semibold text-xs md:text-base">%</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mb-4 md:mb-8">
               <label className="block text-xs md:text-sm font-bold text-purple-400 mb-2 md:mb-3 uppercase tracking-wide">
                 {t.paceToTime.cadenceLabel}
               </label>
@@ -416,7 +533,7 @@ export default function Home() {
                   min="170"
                   max="200"
                   value={cadence}
-                  onChange={(e) => handleCadenceChange(parseInt(e.target.value))}
+                  onChange={(e) => setCadence(parseInt(e.target.value))}
                   className="w-full h-2 md:h-3 bg-slate-800/50 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 md:[&::-webkit-slider-thumb]:w-6 md:[&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-r [&::-webkit-slider-thumb]:from-purple-500 [&::-webkit-slider-thumb]:to-pink-500 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:shadow-purple-500/50 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-125"
                 />
                 <div className="text-center bg-slate-800/30 rounded-lg md:rounded-xl py-2 md:py-3 border border-slate-700/50">
@@ -426,14 +543,19 @@ export default function Home() {
               </div>
             </div>
             
-            <button
-              onClick={handlePaceToTime}
-              className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white py-3 md:py-5 rounded-lg md:rounded-xl font-black text-sm md:text-lg hover:from-cyan-400 hover:to-blue-400 transition-all duration-200 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              {t.paceToTime.button}
-            </button>
             {calculatedTimes && (
               <div className="mt-4 md:mt-8 space-y-3 md:space-y-6">
+                {/* Adjusted Pace Display */}
+                {adjustedPaceDisplay && (
+                  <div className="bg-gradient-to-br from-cyan-900/40 to-blue-900/40 backdrop-blur p-4 md:p-6 rounded-xl md:rounded-2xl border-2 border-cyan-500/50 shadow-lg shadow-cyan-500/20 text-center">
+                    <div className="text-xs md:text-sm font-bold text-cyan-300 uppercase tracking-wider mb-1 md:mb-2">
+                      {t.paceToTime.adjustedPace} ({pacePercent}%)
+                    </div>
+                    <div className="text-3xl md:text-5xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                      {adjustedPaceDisplay}
+                    </div>
+                  </div>
+                )}
                 <h3 className="text-base md:text-2xl font-black text-white uppercase tracking-tight">
                   {t.paceToTime.raceTimes}
                 </h3>
@@ -755,6 +877,78 @@ export default function Home() {
                     <div className="text-xl md:text-3xl font-black text-white group-hover:text-orange-400 transition-colors">
                       {vdotProjections["full"]}
                     </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Laps Calculator */}
+        {activeTab === "laps" && (
+          <div className="bg-slate-900/40 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl p-4 md:p-8 border border-slate-800">
+            <h2 className="text-2xl md:text-4xl font-black text-white mb-1 md:mb-2">
+              {t.laps.title}
+            </h2>
+            <p className="text-slate-400 mb-4 md:mb-8 text-xs md:text-sm">
+              {t.laps.subtitle}
+            </p>
+            
+            <div className="mb-4 md:mb-8">
+              <label className="block text-xs md:text-sm font-bold text-emerald-400 mb-2 md:mb-3 uppercase tracking-wide">
+                {t.laps.targetDistanceLabel}
+              </label>
+              <div className="flex gap-2 md:gap-3 items-center">
+                <input
+                  type="number"
+                  placeholder={t.laps.targetDistancePlaceholder}
+                  value={lapsTargetDistance}
+                  onChange={(e) => setLapsTargetDistance(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleLapsCalculate()}
+                  className="flex-1 px-3 md:px-5 py-2 md:py-4 bg-slate-800/50 border-2 border-slate-700 rounded-lg md:rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white text-base md:text-lg font-bold placeholder-slate-600 transition-all duration-200"
+                  min="0"
+                  step="0.1"
+                />
+                <span className="text-slate-400 font-semibold text-sm md:text-lg">km</span>
+              </div>
+            </div>
+            
+            <button
+              onClick={handleLapsCalculate}
+              className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3 md:py-5 rounded-lg md:rounded-xl font-black text-sm md:text-lg hover:from-emerald-400 hover:to-teal-400 transition-all duration-200 shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              {t.laps.button}
+            </button>
+            
+            {lapsResult && (
+              <div className="mt-4 md:mt-8 space-y-3 md:space-y-6">
+                <h3 className="text-base md:text-2xl font-black text-white uppercase tracking-tight">
+                  {t.laps.lapResults}
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-4 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-emerald-500/50 transition-all duration-300 hover:scale-105 group">
+                    <div className="text-[10px] md:text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1 md:mb-2">{t.laps.track400m}</div>
+                    <div className="text-3xl md:text-4xl font-black text-white group-hover:text-emerald-400 transition-colors">
+                      {lapsResult.track400m % 1 === 0 ? lapsResult.track400m.toFixed(0) : lapsResult.track400m.toFixed(1)}
+                    </div>
+                    <div className="text-xs md:text-sm text-slate-400 mt-1">{t.laps.laps}</div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-4 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-emerald-500/50 transition-all duration-300 hover:scale-105 group">
+                    <div className="text-[10px] md:text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1 md:mb-2">{t.laps.track1_4k}</div>
+                    <div className="text-3xl md:text-4xl font-black text-white group-hover:text-emerald-400 transition-colors">
+                      {lapsResult.track1_4k % 1 === 0 ? lapsResult.track1_4k.toFixed(0) : lapsResult.track1_4k.toFixed(2)}
+                    </div>
+                    <div className="text-xs md:text-sm text-slate-400 mt-1">{t.laps.laps}</div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur p-4 md:p-5 rounded-lg md:rounded-2xl border border-slate-700 hover:border-emerald-500/50 transition-all duration-300 hover:scale-105 group">
+                    <div className="text-[10px] md:text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1 md:mb-2">{t.laps.track3k}</div>
+                    <div className="text-3xl md:text-4xl font-black text-white group-hover:text-emerald-400 transition-colors">
+                      {lapsResult.track3k % 1 === 0 ? lapsResult.track3k.toFixed(0) : lapsResult.track3k.toFixed(2)}
+                    </div>
+                    <div className="text-xs md:text-sm text-slate-400 mt-1">{t.laps.laps}</div>
                   </div>
                 </div>
               </div>
