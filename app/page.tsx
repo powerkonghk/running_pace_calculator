@@ -501,7 +501,7 @@ export default function Home() {
                   />
                   <span className="text-slate-400 font-semibold text-sm md:text-lg">%</span>
                   <div className="flex gap-1 md:gap-2 ml-auto">
-                    {[80, 83, 90, 110].map((p) => (
+                    {[85, 90, 95, 100, 105, 110].map((p) => (
                       <button
                         key={p}
                         onClick={() => setPacePercent(String(p))}
