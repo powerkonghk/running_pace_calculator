@@ -26,6 +26,8 @@ const translations = {
       adjustedPace: "Adjusted Pace",
       faster: "faster",
       slower: "slower",
+      durationLabel: "Run Duration (hours)",
+      distanceCovered: "Distance Covered",
     },
     timeToPace: {
       title: "Time to Pace",
@@ -92,6 +94,8 @@ const translations = {
       adjustedPace: "調整後配速",
       faster: "快咗",
       slower: "慢咗",
+      durationLabel: "跑步時間（小時）",
+      distanceCovered: "可跑距離",
     },
     timeToPace: {
       title: "時間計配速",
@@ -148,6 +152,8 @@ export default function Home() {
   const [paceSeconds, setPaceSeconds] = useState("");
   const [pacePercent, setPacePercent] = useState("100");
   const [adjustedPaceDisplay, setAdjustedPaceDisplay] = useState<string | null>(null);
+  const [durationHours, setDurationHours] = useState("2.5");
+  const [distanceCovered, setDistanceCovered] = useState<string | null>(null);
   const [calculatedTimes, setCalculatedTimes] = useState<{
     "100m": string;
     "200m": string;
@@ -257,12 +263,19 @@ export default function Home() {
       setAdjustedPaceDisplay(null);
       setCalculatedTimes(null);
       setStrideLength(null);
+      setDistanceCovered(null);
       return;
     }
 
     // Race times are based on the adjusted pace
     const adjustedPaceSeconds = getAdjustedPaceSeconds(pacePerKmSeconds);
     setAdjustedPaceDisplay(formatPaceString(adjustedPaceSeconds));
+
+    // Distance covered in the given run duration (default 2.5 hours)
+    const duration = parseFloat(durationHours);
+    const validDuration = !isNaN(duration) && duration > 0 ? duration : 2.5;
+    const distanceKm = (validDuration * 3600) / adjustedPaceSeconds;
+    setDistanceCovered(distanceKm.toFixed(2));
 
     const times = {
       "100m": formatTime((adjustedPaceSeconds / 1000) * 100),
@@ -287,11 +300,11 @@ export default function Home() {
     }
   };
 
-  // Auto-recalculate on any input change (pace, percentage or cadence)
+  // Auto-recalculate on any input change (pace, percentage, duration or cadence)
   useEffect(() => {
     handlePaceToTime();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paceMinutes, paceSeconds, pacePercent, cadence]);
+  }, [paceMinutes, paceSeconds, pacePercent, durationHours, cadence]);
 
   const handleTimeToPace = () => {
     const hours = parseInt(targetHours) || 0;
@@ -543,6 +556,23 @@ export default function Home() {
               </div>
             </div>
             
+            <div className="mb-4 md:mb-8">
+              <label className="block text-xs md:text-sm font-bold text-amber-400 mb-2 md:mb-3 uppercase tracking-wide">
+                {t.paceToTime.durationLabel}
+              </label>
+              <div className="flex items-center gap-2 md:gap-3 bg-slate-800/30 rounded-lg md:rounded-xl px-3 md:px-4 py-2 md:py-3 border border-slate-700/50 focus-within:border-amber-500/50 transition-colors">
+                <input
+                  type="number"
+                  value={durationHours}
+                  onChange={(e) => setDurationHours(e.target.value)}
+                  min="0"
+                  step="0.5"
+                  className="w-full bg-transparent text-2xl md:text-4xl font-black text-center bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+                <span className="text-slate-400 font-semibold text-sm md:text-lg">h</span>
+              </div>
+            </div>
+            
             {calculatedTimes && (
               <div className="mt-4 md:mt-8 space-y-3 md:space-y-6">
                 {/* Adjusted Pace Display */}
@@ -614,6 +644,14 @@ export default function Home() {
                       {calculatedTimes["full"]}
                     </div>
                   </div>
+                  {distanceCovered && (
+                    <div className="bg-gradient-to-br from-amber-900/40 to-slate-900/80 backdrop-blur p-2 md:p-5 rounded-lg md:rounded-2xl border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:scale-105 group">
+                      <div className="text-[10px] md:text-xs font-bold text-amber-300 uppercase tracking-wider mb-0.5 md:mb-1">{t.paceToTime.distanceCovered} ({durationHours || "2.5"}h)</div>
+                      <div className="text-base md:text-3xl font-black text-amber-400 group-hover:text-amber-300 transition-colors">
+                        {distanceCovered} km
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {strideLength && (
                   <div className="mt-4 md:mt-8">
